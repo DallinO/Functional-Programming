@@ -12,57 +12,19 @@
 -module(prove05).
 -export([test_ps1/0, test_ps2/0, test_ps3/0]).
 
+% Problem 1.1
+
 % Problem 1.2
 
-greater_list(Value) ->
-    fun(List) ->
-        lists:filter(fun(Item) -> Item > Value end, List)
-    end.
-
-multiply_list(Value) -> 
-    fun(List) -> 
-        lists:map(fun(Item) -> Value * Item end, List)
-    end.
 
 % Problem 1.3
 % Provide specification and definition (as comments) along with the code
-multiples_of_list(Value) ->
-    fun(List) ->
-        lists:filter(fun(Item) -> Item rem Value =:= 0 end, List)
-    end.
+
 
 % Problem 2.1
-
 curry3(Lambda) -> (fun(Param1) -> (fun(Param2) -> (fun(Param3) -> Lambda(Param1, Param2, Param3) end) end) end).
 
-% Problem 2.2
-alert_intermediate(Location) ->
-    curry3(fun(Category, Message) -> alert(Location, Category, Message) end).
-
-% Problem 2.3
-alert_intermediate(Location, Category) ->
-    curry3(fun(Message) -> alert(Location, Category, Message) end).
-
-
 % Problem 3.1
-map_filter_fold2(Value) ->
-    List = lists:seq(1, Value),
-    fun (MapL) -> 
-        MapList = lists:map(MapL, List),
-        fun (FilterL) ->
-            FilterList = lists:filter(FilterL, MapList),
-            fun (FoldInit, FoldL) ->
-                FoldResult = lists:foldl(FoldL, FoldInit, FilterList),
-                FoldResult
-            end
-        end
-    end.
-
-partial_application(Value) ->
-    PartialApplied = map_filter_fold2(Value),
-    Mapper = PartialApplied(fun (X) -> X * 3 end),
-    Filtered = Mapper(fun (X) -> X rem 2 =:= 0 end),
-    Filtered(fun (_, Acc) -> Acc end, fun (X, Acc) -> [X | Acc] end, []).
 
 
 % Problem 3.2
@@ -150,7 +112,6 @@ test_ps1() ->
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % Chain the map, filter, and foldl functions in a single line as described in the problem
-    933120 = lists:foldl(fun(X, Acc) -> X * Acc end, 1, lists:filter(fun(X) -> X rem 2 =:= 0 end, lists:map(fun(X) -> X * 3 end, [1,2,3,4,5,6,7,8,9,10]))),
 
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,16 +119,16 @@ test_ps1() ->
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     L = [2, 4, 6, 8, 10, 12],
-    [12,16,20,24] = (greater_list(10))((multiply_list(2))(L)),
-    [24] = (multiply_list(2))((greater_list(10))(L)),
+    %[12,16,20,24] = (greater_list(10))((multiply_list(2))(L)),
+    %[24] = (multiply_list(2))((greater_list(10))(L)),
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Test Problem 1.3
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    Multiples7 = multiples_of_list(7),
-    [7,14,21,28] = Multiples7(lists:seq(1,30)),
-    [42,49] = Multiples7(lists:seq(40,50)),
+    %Multiples7 = multiples_of_list(7),
+    %[7,14,21,28] = Multiples7(lists:seq(1,30)),
+    %[42,49] = Multiples7(lists:seq(40,50)),
 
 
     ok.
@@ -187,29 +148,23 @@ test_ps2() ->
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % Write test code to curry the first parameter and test the intermediate function twice
-    Alert1 = alert_intermediate("Location1"),
-    Alert2 = alert_intermediate("Location2"),
-    Alert1("Category1", "Message1"),
-    Alert2("Category2", "Message2"),
+
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Test Problem 2.3
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % Write test code to curry the first and second parameter and test the intermediate function twice
-    Alert1 = alert_intermediate("Location1", "Category1"),
-    Alert2 = alert_intermediate("Location2", "Category2"),
-    Alert1("Message1"),
-    Alert2("Message2"),
+
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Test Problem 2.4
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % Write test code to curry the range_check and use it with a filter as described in the instructions
-    Range_10_to_20 = ((curry3(fun range_check/3))(10))(20),
-    Full_List_of_Numbers = [3, 15, 23, 19, 6, 16, 13, -5, -20, 30],
-    [15,19,16,13] = lists:filter(Range_10_to_20, Full_List_of_Numbers),
+    %Range_Check_10_to_20 = put_your_code_here_using_curry3,
+    %Full_List_of_Numbers = [3, 15, 23, 19, 6, 16, 13, -5, -20, 30],
+    %[15,19,16,13] = put_your_code_here_using_filter_and_the_two_variables_above,
 
     ok.
 
@@ -229,18 +184,18 @@ test_ps3() ->
     Product = fun(X,Y) -> X*Y end,
 
     % Example not using any partial applications
-    35 = (((map_filter_fold2(6))(Square))(Odd))(0, Sum),
+    %35 = (((map_filter_fold2(6))(Square))(Odd))(0, Sum),
 
     % Example creating and using partial application
-    First10Squares = (map_filter_fold2(10))(Square),
-    165 = (First10Squares(Odd))(0, Sum),
-    14745600 = (First10Squares(Even))(1,Product),
+    %First10Squares = (map_filter_fold2(10))(Square),
+    %165 = (First10Squares(Odd))(0, Sum),
+    %14745600 = (First10Squares(Even))(1,Product),
 
     % Write and test a partial application function to obtain the first 20 triples that are even and
 	% test per the instructions.
-    First20TriplesOnlyEven = partial_application(20),
-    330 = lists:sum(First20TriplesOnlyEven),
-    219419659468800 = lists:foldl(fun(X, Acc) -> X * Acc end, 1, First20TriplesOnlyEven),
+    %First20TriplesOnlyEven = write_code_here,
+    %330 = write_code_here,
+    %219419659468800 = write_code_here,
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Test Problem 3.2
