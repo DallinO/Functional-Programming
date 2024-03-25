@@ -187,10 +187,13 @@ test_ps2() ->
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % Write test code to curry the first parameter and test the intermediate function twice
-    Alert1 = alert_intermediate("Location1"),
-    Alert2 = alert_intermediate("Location2"),
-    Alert1("Category1", "Message1"),
-    Alert2("Category2", "Message2"),
+    % Step 1: Curry the alert function
+    CurriedAlert = curry3(fun alert/3),
+    LocationAlert = CurriedAlert("Madison County"),
+    CategoryAlert1 = LocationAlert("Winter Storm Warning"),
+    CategoryAlert1("Expect 8-12 inches of Snow"),
+    CategoryAlert2 = LocationAlert("Security"),
+    CategoryAlert2("Unauthorized access detected at the main gate"),
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Test Problem 2.3
