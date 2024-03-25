@@ -58,14 +58,17 @@ map_filter_fold2(Value) ->
         end
     end.
 
-partial_application(Value) ->
-    PartialApplied = map_filter_fold2(Value),
-    Mapper = PartialApplied(fun (X) -> X * 3 end),
-    Filtered = Mapper(fun (X) -> X rem 2 =:= 0 end),
-    Filtered(fun (_, Acc) -> Acc end, fun (X, Acc) -> [X | Acc] end, []).
-
-
 % Problem 3.2
+process_dataset2(Filename) ->
+    Data = read_csv_file(Filename),
+    fun(ColumnId, ColumnType) ->
+        DataColumn = extract_column_array(ColumnType, Data, ColumnId),
+        fun(CalcFunction) ->
+            Result = CalcFunction(DataColumn),
+            Result
+        end
+    end.
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -190,20 +193,17 @@ test_ps2() ->
     % Step 1: Curry the alert function
     CurriedAlert = curry3(fun alert/3),
     LocationAlert = CurriedAlert("Madison County"),
-    CategoryAlert1 = LocationAlert("Winter Storm Warning"),
-    CategoryAlert1("Expect 8-12 inches of Snow"),
-    CategoryAlert2 = LocationAlert("Security"),
-    CategoryAlert2("Unauthorized access detected at the main gate"),
+    CategoryAlert1 = (LocationAlert("Winter Storm Warning"))("Expect 8-12 inches of Snow"),
+    CategoryAlert2 = (LocationAlert("Security"))("Unauthorized access detected at the main gate"),
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Test Problem 2.3
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % Write test code to curry the first and second parameter and test the intermediate function twice
-    Alert1 = alert_intermediate("Location1", "Category1"),
-    Alert2 = alert_intermediate("Location2", "Category2"),
-    Alert1("Message1"),
-    Alert2("Message2"),
+    LocationAlert2 = (CurriedAlert("Madison County"))("Winter..."),
+    CategoryAlert3 = LocationAlert2("Expect..."),
+    CategoryAlert3 = LocationAlert2("Warning..."),
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Test Problem 2.4
@@ -241,34 +241,34 @@ test_ps3() ->
 
     % Write and test a partial application function to obtain the first 20 triples that are even and
 	% test per the instructions.
-    First20TriplesOnlyEven = partial_application(20),
-    330 = lists:sum(First20TriplesOnlyEven),
-    219419659468800 = lists:foldl(fun(X, Acc) -> X * Acc end, 1, First20TriplesOnlyEven),
+    First20TriplesOnlyEven = ((map_filter_fold2(20))(Triple))(Even),
+    330 = First20TriplesOnlyEven(0, Sum),
+    219419659468800 = First20TriplesOnlyEven(1, Product),
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Test Problem 3.2
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % Examples not using any partial applications
-    % Avg_Temp = process_dataset("weather.csv", 6, int, fun list_average/1),
-    % io:format("Avg Temp = ~p~n",[Avg_Temp]), % Answer = 24.8472
-    % Count_Snow = process_dataset("weather.csv", 5, text, list_text_count("Snow")),
-    % io:format("Count Snow = ~p~n",[Count_Snow]), % Answer = 38
+    Avg_Temp = process_dataset("weather.csv", 6, int, fun list_average/1),
+    io:format("Avg Temp = ~p~n",[Avg_Temp]), % Answer = 24.8472
+    Count_Snow = process_dataset("weather.csv", 5, text, list_text_count("Snow")),
+    io:format("Count Snow = ~p~n",[Count_Snow]), % Answer = 38
 
     % Test partial application to read entire dataset only once
-    % Weather = process_dataset2("weather.csv"),
-    % Avg_WindChill = (Weather(8, int))(fun list_average/1),
-    % io:format("Avg WindChill ~p~n",[Avg_WindChill]), % Answer = 12.0
-    % Avg_Pressure = (Weather(9,float))(fun list_average/1),
-    % io:format("Avg Pressure ~p~n",[Avg_Pressure]), % Answer = 29.735
+    Weather = process_dataset2("weather.csv"),
+    Avg_WindChill = (Weather(8, int))(fun list_average/1),
+    io:format("Avg WindChill ~p~n",[Avg_WindChill]), % Answer = 12.0
+    Avg_Pressure = (Weather(9,float))(fun list_average/1),
+    io:format("Avg Pressure ~p~n",[Avg_Pressure]), % Answer = 29.735
 
     % Test partial application to read the entire dataset and extract the
     % Observation column (column 5; text) only once
-    % Weather_Obs = Weather(5, text),
-    % Count_Windy = Weather_Obs(list_text_count("Windy")), % Answer = 19
-    % io:format("Count Windy = ~p~n",[Count_Windy]),
-    % Count_Mist = Weather_Obs(list_text_count("Mist")), % Answer = 7
-    % io:format("Count Mist = ~p~n",[Count_Mist]),
+    Weather_Obs = Weather(5, text),
+    Count_Windy = Weather_Obs(list_text_count("Windy")), % Answer = 19
+    io:format("Count Windy = ~p~n",[Count_Windy]),
+    Count_Mist = Weather_Obs(list_text_count("Mist")), % Answer = 7
+    io:format("Count Mist = ~p~n",[Count_Mist]),
 
 
     ok.
