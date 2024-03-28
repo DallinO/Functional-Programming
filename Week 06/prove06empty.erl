@@ -14,72 +14,16 @@
 
 % Problem 1.1
 
--record(account, {owner::string(), identifier::string(), balance::float()}).
-
-combine_accounts(Account1, nil) -> Account1;
-combine_accounts(nil, Account2) -> Account2;
-combine_accounts(Account1 = #account{balance=Balance1}, Account2 = #account{balance=Balance2}) when Balance1 > Balance2 ->
-    #account{owner=Account1#account.owner, identifier=Account1#account.identifier, balance=Balance1 + Balance2};
-combine_accounts(Account1, Account2) ->
-    #account{owner=Account2#account.owner, identifier=Account2#account.identifier, balance=Account1#account.balance + Account2#account.balance}.
-
-combine_accounts_2(Account1, nil) -> Account1;
-combine_accounts_2(nil, Account2) -> Account2;
-combine_accounts_2(Account1, Account2) when element(3, Account1) > element(3, Account2) ->
-    {element(1, Account1), element(2, Account1), element(3, Account1) + element(3, Account2)};
-combine_accounts_2(Account1, Account2) ->
-    {element(1, Account2), element(2, Account2), element(3, Account1) + element(3, Account2)}.
 
 % Problem 1.3
 
-combine_functions(nil, F) -> F;
-combine_functions(F, nil) -> F;
-combine_functions(F1, F2) ->
-    fun(X) -> F2(F1(X)) end.
 
 % Problem 2.1
-
-cut_half(Number) when Number > 1 ->
-    Result = Number / 2,
-    Remainder = Number rem 2,
-    if
-        Remainder == 0 ->
-            {ok, trunc(Result)};
-        true ->
-            {fail}
-    end;
-cut_half(_) -> {fail}.
-
-maybe_unit(Value) -> {ok, Value}.
-
-maybe_bind({ok, Value}, Lambda) -> Lambda(Value);
-maybe_bind({fail}, _) -> {fail}.
 
 
 % Problem 2.2
 % The following 3 check functions already return the Result Monad type as described in the instructions.
 % Implement the result_unit and result_bind functions.
-
-result_bind({ok}, Password, Lambda) ->
-    case Lambda(Password) of
-        {ok} -> {ok};
-        {error, Errors} -> {error, Errors}
-    end;
-result_bind({error, PrevErrors}, Password, Lambda) ->
-    case Lambda(Password) of
-        {ok} -> {error, PrevErrors};
-        {error, Errors} -> {error, lists:append(PrevErrors, Errors)}
-    end.
-
-
-result_unit() -> {ok}.
-
-
-
-
-
-
-
 check_mixed_case(Password) ->
     UpperExists = lists:foldl(fun (Letter, Result) -> Result or ((Letter >= 65) and (Letter =< 90)) end, false, Password),
     LowerExists = lists:foldl(fun (Letter, Result) -> Result or ((Letter >= 97) and (Letter =< 172)) end, false, Password),
@@ -114,12 +58,6 @@ len({_List, Length}) -> Length.
 
 value({List, _Length}) -> List.
 
-pop(nil) -> create();
-pop({First, Rest}) -> {Rest, -1}.
-
-bind({List, Length}, Lambda, Operational_Parameters) -> 
-    {New_list, Delta_Length} = Lambda(Operational_Parameters, List),
-    {New_List, Length + Delta_Length}.
 
 
 % Problem 3.2
@@ -144,38 +82,20 @@ test_ps1() ->
     A2 = {"Tim", "2424", 600},
     A3 = {"Sue", "5851", 500},
 
-    A4 = #account{owner="Bob", identifier="1234", balance=100},
-    A5 = #account{owner="Tim", identifier="2424", balance=600},
-    A6 = #account{owner="Sue", identifier="5851", balance=500},
-
     % Write test code to demonstrate the associative property with combineAccounts using the 3 accounts above
-    {"Tim","2424",1200} = combine_accounts_2(A1, combine_accounts_2(A2, A3)),
-    {"Tim","2424",1200} = combine_accounts_2(combine_accounts_2(A1, A2), A3),
-
-    {account,"Tim","2424",1200} = combine_accounts(A4, combine_accounts(A5, A6)),
-    {account,"Tim","2424",1200} = combine_accounts(combine_accounts(A4, A5), A6),
+    % {"Tim","2424",1200} = put_your_code_here,
+    % {"Tim","2424",1200} = put_your_code_here,
 
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Test Problem 1.2
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    A7 = {"Edward", "8879", 3000},
-    A8 = {"George", "5546", 50},
+    A4 = {"Edward", "8879", 3000},
+    A5 = {"George", "5546", 50},
 
     % Write test code using a fold to combine all 5 accounts into one account for Bob (A1)
-    Accounts = [
-        A1,
-        A2,
-        A3,
-        A7,
-        A8
-    ],
-    {"Edward", "8879", 4250} = lists:foldl(fun combine_accounts_2/2, nil, Accounts),
-
-    % OR ???
-
-    {"Edward", "8879", 4250} = combine_accounts_2(combine_accounts_2(combine_accounts_2(combine_accounts_2(A1, A2), A3), A7), A8),
+    % {"Edward", "8879", 4250} = put_your_foldl_code_here,
 
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -187,11 +107,11 @@ test_ps1() ->
     F3 = fun string:reverse/1,
 
     % Write test code to demonstrate the associate property of combineFunctions using the 3 functions above
-    Combined_F1 = combine_functions(combine_functions(F1, F2), F3),
-    Combined_F2 = combine_functions(F1, combine_functions(F2, F3)),
+    % Combined_F1 = put_your_code_here,
+    % Combined_F2 = put_your_code_here,
 
-    "FEDCBA" = Combined_F1("   abCDef  "),
-    "FEDCBA" = Combined_F2("   abCDef  "),
+    % "FEDCBA" = Combined_F1("   abCDef  "),
+    % "FEDCBA" = Combined_F2("   abCDef  "),
 
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -199,8 +119,8 @@ test_ps1() ->
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % Write test code to combine all three functions in the previous problem using a foldl per the instructions
-    All_Combined = lists:foldl(fun(F, Acc) -> combine_functions(F, Acc) end, nil, [F1, F2, F3]),
-    "FEDCBA" = All_Combined("   abCDef  "),
+    % All_Combined = put_your_foldl_code_here,
+    % "FEDCBA" = All_Combined("   abCDef  "),
 
 
     ok.
@@ -211,41 +131,40 @@ test_ps2() ->
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Test Problem 2.1
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
-    {ok,4} = cut_half(8),
-    {fail} = cut_half(5),
-    {fail} = cut_half(-1),
-    {ok,50} = maybe_bind(maybe_bind(maybe_unit(200), fun cut_half/1), fun cut_half/1),
+
+    %{ok,4} = cut_half(8),
+    %{fail} = cut_half(5),
+    %{fail} = cut_half(-1),
+    %{ok,50} = maybe_bind(maybe_bind(maybe_unit(200), fun cut_half/1), fun cut_half/1),
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Test Problem 2.2
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    Password1 = "simple",
-    Result1 = result_bind(result_bind(result_bind(result_unit(), Password1, fun check_mixed_case/1), Password1, fun check_number_exists/1), Password1, fun check_length/1),
-    io:format("Result1 = ~p~n",[Result1]), % Should show error with all three errors in the list
+    %Password1 = "simple",
+    %Result1 = result_bind(result_bind(result_bind(result_unit(), Password1, fun check_mixed_case/1), Password1, fun check_number_exists/1), Password1, fun check_length/1),
+    %io:format("Result1 = ~p~n",[Result1]), % Should show error with all three errors in the list
 
-    Password2 = "mostlygood23",
-    Result2 = result_bind(result_bind(result_bind(result_unit(), Password2, fun check_mixed_case/1), Password2, fun check_number_exists/1), Password2, fun check_length/1),
-    io:format("Result2 = ~p~n",[Result2]), % Should show error with one error about missing an upper case letter
+    %Password2 = "mostlygood23",
+    %Result2 = result_bind(result_bind(result_bind(result_unit(), Password2, fun check_mixed_case/1), Password2, fun check_number_exists/1), Password2, fun check_length/1),
+    %io:format("Result2 = ~p~n",[Result2]), % Should show error with one error about missing an upper case letter
 
-    Password3 = "GoodPassword42",
-    Result3 = result_bind(result_bind(result_bind(result_unit(), Password3, fun check_mixed_case/1), Password3, fun check_number_exists/1), Password3, fun check_length/1),
-    io:format("Result3 = ~p~n",[Result3]), % Should show ok
+    %Password3 = "GoodPassword42",
+    %Result3 = result_bind(result_bind(result_bind(result_unit(), Password3, fun check_mixed_case/1), Password3, fun check_number_exists/1), Password3, fun check_length/1),
+    %io:format("Result3 = ~p~n",[Result3]), % Should show ok
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Test Problem 2.3
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % Modify the test code below to replace `put_your_fold_here` with a foldl to do the same chaining as the previous problem
-    CheckFuns = [fun check_mixed_case/1, fun check_number_exists/1, fun check_length/1],
-    Result1_With_Fold = lists:foldl(fun(CheckFun, Acc) -> result_bind(Acc, Password1, CheckFun) end, result_unit(), CheckFuns),
-
+    Result1_With_Fold = put_your_fold_here,
     io:format("Result1_With_Fold = ~p~n",[Result1_With_Fold]),
 
-    Result2_With_Fold = lists:foldl(fun(CheckFun, Acc) -> result_bind(Acc, Password2, CheckFun) end, result_unit(), CheckFuns),
+    Result2_With_Fold = put_your_fold_here,
     io:format("Result2_With_Fold = ~p~n",[Result2_With_Fold]),
 
-    Result3_With_Fold = lists:foldl(fun(CheckFun, Acc) -> result_bind(Acc, Password3, CheckFun) end, result_unit(), CheckFuns),
+    Result3_With_Fold = put_your_fold_here,
     io:format("Result3_With_Fold = ~p~n",[Result3_With_Fold]),
 
     ok.
@@ -257,9 +176,9 @@ test_ps3() ->
     % Test Problem 3.1
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    L1 = create(),
-    nil = value(L1),
-    0 = len(L1),
+    %L1 = create(),
+    %nil = value(L1),
+    %0 = len(L1),
 
     %L2 = bind(L1, fun push/2, [2]),
     %{2,nil} = value(L2),
