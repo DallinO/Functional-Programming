@@ -44,20 +44,20 @@ add_rbt(NewValue, Tree) ->
 add_rbt_(NewValue, nil) ->
     {red, NewValue, nil, nil};
 add_rbt_(NewValue, {Color, Value, Left, Right}) when NewValue < Value ->
-    {Color, Value, add_rbt(NewValue, Left), Right};
+    balance({Color, Value, add_rbt_(NewValue, Left), Right});
 add_rbt_(NewValue, {Color, Value, Left, Right}) when NewValue > Value ->
-    {Color, Value, Left, add_rbt(NewValue, Right)};
+    balance({Color, Value, Left, add_rbt_(NewValue, Right)});
 add_rbt_(NewValue, Node) ->
     Node.
 
 % Helper function to balance the red-black tree
-balance({black, X, {red, Y, {red, Z, A, B}, C}, D}) ->
-    {red, Y, {black, Z, A, B}, {black, X, C, D}};
-balance({black, X, {red, Z, A, {red, Y, B, C}}, D}) ->
+balance({black, Z, {red, X, A, {red, Y, B, C}}, D}) ->
+    {red, Y, {black, X, A, B}, {black, Z, C, D}};
+balance({black, X, A, {red, Y, B, {red, Z, C, D}}}) ->
     {red, Y, {black, X, A, B}, {black, Z, C, D}};
 balance({black, X, A, {red, Z, {red, Y, B, C}, D}}) ->
     {red, Y, {black, X, A, B}, {black, Z, C, D}};
-balance({black, X, A, {red, Y, B, {red, Z, C, D}}}) ->
+balance({black, Z, {red, Y, {red, X, A, B}, C}, D}) ->
     {red, Y, {black, X, A, B}, {black, Z, C, D}};
 balance(Node) ->
     Node. % No need for balancing if the pattern doesn't match
@@ -144,6 +144,7 @@ test_ps2() ->
     {black,5,nil,nil} = L1,
 
     L2 = add_rbt(3, L1),
+    io:format("~p~n", [L2]),
     {black,5,{red,3,nil,nil},nil} = L2,
 
     L3 = add_rbt(7, L2),
@@ -196,22 +197,24 @@ test_ps3() ->
     % variable below when performing the foldl functions.  Add your code
 	% in between the start_perf and stop_perf function calls.
 
-    %List = lists:seq(1,10000),
-    %start_perf(),
+    List = lists:seq(1,10000),
+    start_perf(),
+    T1 = lists:foldl(fun add/2, nil, List),
 
-    %stop_perf("add"),
+    stop_perf("add"),
 
-    %start_perf(),
+    start_perf(),
+    T2 = lists:foldl(fun add_rbt/2, nil, List),
 
-    %stop_perf("add_rbt"),
+    stop_perf("add_rbt"),
 
-    %start_perf(),
+    start_perf(),
+    contains(10000, T1),
+    stop_perf("contains"),
 
-    %stop_perf("contains"),
-
-    %start_perf(),
-
-    %stop_perf("contains_rbt"),
+    start_perf(),
+    contains_rbt(10000, T2),
+    stop_perf("contains_rbt"),
 
     % Observations (see instructions):
 

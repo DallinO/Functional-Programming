@@ -118,13 +118,22 @@ pop(nil) -> create();
 pop({First, Rest}) -> {Rest, -1}.
 
 bind({List, Length}, Lambda, Operational_Parameters) -> 
-    {New_list, Delta_Length} = Lambda(Operational_Parameters, List),
-    {New_List, Length + Delta_Length}.
+    {New_list, Delta_Length} = erlang:apply(Lambda, Operational_Parameters ++ [List]),
+    {New_list, Length + Delta_Length}.
 
 
 % Problem 3.2
 % The push2 function is implemented below.  Implement the pop2 and bind2 per the instructions.
 push2(Value, List) -> {ok, {{Value, List},1}}.
+
+pop2(nil) -> {fail};
+pop2({First, Rest}) -> {ok, {Rest, -1}}.
+
+bind2({List, Length}, Lambda, Operational_Parameters) -> 
+    case erlang:apply(Lambda, Operational_Parameters ++ [List]) of
+        {ok, {New_list, Delta_Length}} -> {New_list, Length + Delta_Length};
+        {fail} -> {List, Length}
+    end.
 
 
 
@@ -261,60 +270,60 @@ test_ps3() ->
     nil = value(L1),
     0 = len(L1),
 
-    %L2 = bind(L1, fun push/2, [2]),
-    %{2,nil} = value(L2),
-    %1 = len(L2),
+    L2 = bind(L1, fun push/2, [2]),
+    {2,nil} = value(L2),
+    1 = len(L2),
 
-    %L3 = bind(L2, fun push/2, [4]),
-    %{4,{2,nil}} = value(L3),
-    %2 = len(L3),
+    L3 = bind(L2, fun push/2, [4]),
+    {4,{2,nil}} = value(L3),
+    2 = len(L3),
 
-    %L4 = bind(L3, fun push/2, [6]),
-    %{6,{4,{2,nil}}} = value(L4),
-    %3 = len(L4),
+    L4 = bind(L3, fun push/2, [6]),
+    {6,{4,{2,nil}}} = value(L4),
+    3 = len(L4),
 
-    %L5 = bind(L4, fun pop/1, []),
-    %{4,{2,nil}} = value(L5),
-    %2 = len(L5),
+    L5 = bind(L4, fun pop/1, []),
+    {4,{2,nil}} = value(L5),
+    2 = len(L5),
 
-    %L6 = bind(L5, fun push/2, [8]),
-    %{8,{4,{2,nil}}} = value(L6),
-    %3 = len(L6),
+    L6 = bind(L5, fun push/2, [8]),
+    {8,{4,{2,nil}}} = value(L6),
+    3 = len(L6),
 
-    %L7 = bind(L6, fun pop/1, []),
-    %{4,{2,nil}} = value(L7),
-    %2 = len(L7),
+    L7 = bind(L6, fun pop/1, []),
+    {4,{2,nil}} = value(L7),
+    2 = len(L7),
 
-    %L8 = bind(L7, fun pop/1, []),
-    %{2,nil} = value(L8),
-    %1 = len(L8),
+    L8 = bind(L7, fun pop/1, []),
+    {2,nil} = value(L8),
+    1 = len(L8),
 
-    %L9 = bind(L8, fun pop/1, []),
-    %nil = value(L9),
-    %0 = len(L9),
+    L9 = bind(L8, fun pop/1, []),
+    nil = value(L9),
+    0 = len(L9),
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Test Problem 3.2
     %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    % L10 = bind2(L9, fun push2/2, [100]),
-    % {100, nil} = value(L10),
-    % 1 = len(L10),
+    L10 = bind2(L9, fun push2/2, [100]),
+    {100, nil} = value(L10),
+    1 = len(L10),
 
-    % L11 = bind2(L10, fun push2/2, [200]),
-    % {200, {100, nil}} = value(L11),
-    % 2 = len(L11),
+    L11 = bind2(L10, fun push2/2, [200]),
+    {200, {100, nil}} = value(L11),
+    2 = len(L11),
 
-    % L12 = bind2(L11, fun pop2/1, []),
-    % {100, nil} = value(L12),
-    % 1 = len(L12),
+    L12 = bind2(L11, fun pop2/1, []),
+    {100, nil} = value(L12),
+    1 = len(L12),
 
-    % L13 = bind2(L12, fun pop2/1, []),
-    % nil = value(L13),
-    % 0 = len(L13),
+    L13 = bind2(L12, fun pop2/1, []),
+    nil = value(L13),
+    0 = len(L13),
 
-    % L14 = bind2(L13, fun pop2/1, []),
-    % nil = value(L14),
-    % 0 = len(L14),
+    L14 = bind2(L13, fun pop2/1, []),
+    nil = value(L14),
+    0 = len(L14),
 
     ok.
