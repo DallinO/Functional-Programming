@@ -217,5 +217,11 @@ test_ps3() ->
     stop_perf("contains_rbt"),
 
     % Observations (see instructions):
+    % The Add function alone executes in a linear fashion making it very time
+    % consuming to execute. Consequently the Contains function requires more
+    % time to execute because it has to traverse the tree in a linear manner.
+    % The Add RBT takes a fraction of the time because it will sort the values
+    % in a proper tree. This also affects the effeciency of the Contains RBT
+    % function allowing it to perform a binary search to find the target value.
 
     ok.
